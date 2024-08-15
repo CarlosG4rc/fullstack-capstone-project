@@ -13,7 +13,7 @@ const data = JSON.parse(fs.readFileSync(filename, 'utf8')).docs;
 
 // connect to database and insert data into the collection
 async function loadData() {
-    const client = new MongoClient(url);
+    const client = new MongoClient("mongodb://localhost:27017/");
 
     try {
         // Connect to the MongoDB client
@@ -21,10 +21,10 @@ async function loadData() {
         console.log("Connected successfully to server");
 
         // database will be created if it does not exist
-        const db = client.db(dbName);
+        const db = client.db("giftdb");
 
         // collection will be created if it does not exist
-        const collection = db.collection(collectionName);
+        const collection = db.collection("gifts");
         let cursor = await collection.find({});
         let documents = await cursor.toArray();
 
@@ -36,7 +36,7 @@ async function loadData() {
             console.log("Gifts already exists in DB")
         }
     } catch (err) {
-        console.error(err);
+        console.error('Failed to connect to DB', err);
     } finally {
         // Close the connection
         await client.close();
