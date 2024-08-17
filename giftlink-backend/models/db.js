@@ -1,5 +1,5 @@
 // db.js
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local'});
 const MongoClient = require('mongodb').MongoClient;
 
 // MongoDB connection URL with authentication options
@@ -13,7 +13,7 @@ async function connectToDatabase() {
         return dbInstance
     };
 
-    const client = new MongoClient("mongodb://localhost:27017/");      
+    const client = new MongoClient(url);      
 
     await client.connect();
     dbInstance = client.db("giftdb");

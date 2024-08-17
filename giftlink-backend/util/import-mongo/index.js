@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local'});
 const MongoClient = require('mongodb').MongoClient;
 const fs = require('fs');
 
@@ -13,8 +13,7 @@ const data = JSON.parse(fs.readFileSync(filename, 'utf8')).docs;
 
 // connect to database and insert data into the collection
 async function loadData() {
-    const client = new MongoClient("mongodb://localhost:27017/");
-
+    const client = new MongoClient(url);
     try {
         // Connect to the MongoDB client
         await client.connect();
