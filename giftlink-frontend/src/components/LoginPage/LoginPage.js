@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { urlConfig } from '../../config'
+import { userAppContext } from '../../context/AuthContext'
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+
 import './LoginPage.css';
 
 function LoginPage() {
@@ -6,8 +11,50 @@ function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [incorrect, setIncorrect] = useState('');
+    const navigate = useNavigate();
+    const { setIsLoggedIn } = userAppContext();
+    const bearerToken =  sessionStorage.getItem('bearer-token');
+    //If the bearerToken has a value (user already logged in), navigate to MainPage
+    useEffect(() => {
+      if(sessionStorage.getItem('auth-token')) {
+        navigate('/app');
+      }
+    },[navigate])
+
     const handleLogin = async () => {
-        console.log("Login button clicked");
+      try{
+        const response = await fetch(`${urlConfig.backendUrl}/api/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': bearerToken ? `Bearer ${bearerToken}` : '', // Include Bearer token if available
+            },
+            body: JSON.stringify({
+                email: email, 
+                password: password
+            }),
+        })
+
+        const json = await response.json();
+
+        if(json.authtoken){
+            sessionStorage.setItem('auth-token', json.authtoken);
+            sessionStorage.setItem('name', json.userName);
+            sessionStorage.setItem('email', json.userEmail);
+            setIsLoggedIn(true);
+            navigate('/app');
+        } else {
+          document.getElementById('email').value = '';
+          document.getElementById('password').value = '';
+          setIncorrect("Wrong password. Try again.");
+          setTimeout(() => {
+            setIncorrect("");
+          }, 2000);
+        }
+      }catch (e){
+        console.log("Error fetching details: " + e.message);
+      }
     }
 
         return (
