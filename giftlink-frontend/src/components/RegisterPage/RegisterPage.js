@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { urlConfig } from '../../config'
+import { userAppContext } from '../../context/AuthContext'
+import { useNavigate } from 'react-router-dom';
 
 import './RegisterPage.css';
 
@@ -9,9 +12,40 @@ function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    // insert code here to create handleRegister function and include console.log
+    const [showerr, setShowerr] = useState('');
+
+    const navigate = useNavigate();
+    const { setIsLoggedIn } = userAppContext();
+    
     const handleRegister = async () => {
-        console.log("Register button clicked");
+        const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                firstName:firstName,
+                lastName: lastName,
+                email: email, 
+                password: password
+            }),
+        })
+        
+        const json = await response.json();
+        
+        console.log('json data', json);
+        console.log('er', json.error);
+        
+        if(json.authtoken){
+            sessionStorage.setItem('authtoken', json.authtoken);
+            sessionStorage.setItem('email', json.email);
+            sessionStorage.setItem('name', firstName);
+            setIsLoggedIn(true);
+            navigate('/app');
+        }
+        if(json.error){
+            setShowerr(json.error);
+        }
     }
 
          return (
@@ -40,7 +74,7 @@ function RegisterPage() {
                 </div>
             </div>
 
-         )//end of return
+        )//end of return
 }
 
 export default RegisterPage;
