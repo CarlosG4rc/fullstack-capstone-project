@@ -49,4 +49,31 @@ router.post('/register', async (req, res) => {
     }
 });
 
+router.post('/login', async (req, res) => {
+    try {
+        const db = await connectToDatabase();
+        const collection = db.collection("users");
+        const theUser = await collection.findOne({ email: req.body.email });
+        if(theUser){
+            let isMatch = await bcryptjs.compare(req.body.password, theUser.password);
+            if(!isMatch){
+                return res.status(404).json({error: "Invalid credentials"});
+            }
+        }
+        const userName = theUser.firstName;
+        const userEmail = theUser.email;
+
+        let payload ={
+            user: {
+                id: theUser._id.toString(),
+            },
+        };
+        jwt.sign(user._id, JWT_SECRET)
+        
+    } catch (e) {
+        logger.error('Not Found');
+        return res.status(404).json({error: "User not found"});
+    }
+});
+
 module.exports = router;
