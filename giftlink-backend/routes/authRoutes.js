@@ -78,43 +78,52 @@ router.post('/login', async (req, res) => {
 });
 
 router.put('/update', async (req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        logger.error('Validation error in update request ', errors.array());
-        return res.status(400).json({ errors: errors.array() });
+        const errors = validationResult(req);
+        if(!errors.isEmpty()){
+            logger.error('Validation error in update request ', errors.array());
+            return res.status(400).json({ errors: errors.array() });
+        }
+    try {
+        const email = req.headers.email;
+
+        if (!email) {
+            logger.error('Email not found in headers');
+            return res.status(400).json({ error: 'Email not found in headers' });
+        }
+        const db = await connectToDatabase();
+        const collection = db.collection("users");
+        const existingUser = await collection.findOne({ email: email });
+
+        existingUser.firstName = req.body.name;
+        existingUser.updatedAt = await collection.findOne({ email })
+
+        if (!existingUser) {
+            logger.error('User not found');
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Task 6: update user credentials in database
+        const updater = await collection.findOneAndUpdate(
+            { email: email },
+            { $set: existingUser },
+            { returnDocument: 'after' }
+        );
+        // Task 7: create JWT authentication using secret key from .env file
+        const payload = {
+            user: {
+                id: updater._id,
+            },
+        };
+
+        const authtoken = jwt.sign(payload, JWT_SECRET);
+        logger.info('User updated successfully');
+
+        res.json({ authtoken });
+    } catch (e) {
+        logger.error(error);
+        return res.status(500).send('Internal server error');
+
     }
-try {
-    const email = req.headers.email;
-
-    if (!email) {
-        logger.error('Email not found in headers');
-        return res.status(400).json({ error: 'Email not found in headers' });
-    }
-    const db = await connectToDatabase();
-    const collection = db.collection("users");
-    const existingUser = await collection.findOne({ email: email });
-
-    existingUser.updatedAt = new Date();
-
-    // Task 6: update user credentials in database
-    const updater = await collection.findOneAndUpdate(
-        { email: email },
-        { $set: existingUser },
-        { returnDocument: 'after' }
-    );
-    // Task 7: create JWT authentication using secret key from .env file
-    const payload = {
-        user: {
-            id: updater._id,
-        },
-    };
-
-    const authtoken = jwt.sign(payload, JWT_SECRET);
-    res.json({authtoken});
-} catch (e) {
-     return res.status(500).send('Internal server error');
-
-}
 });
 
 module.exports = router;
