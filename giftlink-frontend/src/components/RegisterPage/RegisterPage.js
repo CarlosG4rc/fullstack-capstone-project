@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { urlConfig } from '../../config'
-import { userAppContext } from '../../context/AuthContext'
+import { useAppContext } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom';
 
 import './RegisterPage.css';
@@ -15,7 +15,7 @@ function RegisterPage() {
     const [showerr, setShowerr] = useState('');
 
     const navigate = useNavigate();
-    const { setIsLoggedIn } = userAppContext();
+    const { setIsLoggedIn } = useAppContext();
     
     const handleRegister = async () => {
         const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { urlConfig } from '../../config'
-import { userAppContext } from '../../context/AuthContext'
+import { useAppContext } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom';
 
 import './LoginPage.css';
@@ -11,7 +11,7 @@ function LoginPage() {
 
     const [incorrect, setIncorrect] = useState('');
     const navigate = useNavigate();
-    const { setIsLoggedIn } = userAppContext();
+    const { setIsLoggedIn } = useAppContext();
     const bearerToken =  sessionStorage.getItem('bearer-token');
     useEffect(() => {
       if(sessionStorage.getItem('auth-token')) {
