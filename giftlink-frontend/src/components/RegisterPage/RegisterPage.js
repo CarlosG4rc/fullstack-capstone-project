@@ -12,7 +12,7 @@ function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const [showerr, setShowerr] = useState('');
+    const [ setShowerr] = useState('');
 
     const navigate = useNavigate();
     const { setIsLoggedIn } = useAppContext();

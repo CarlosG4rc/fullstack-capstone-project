@@ -80,6 +80,13 @@ function SearchPage() {
                                 <option key={category} value={category}>{category}</option>
                             ))}
                         </select>
+                        <label htmlFor="conditionSelect">Condition</label>
+                        <select id="conditionSelect" className="form-control my-1">
+                            <option value="">All</option>
+                            {conditions.map(condition => (
+                                <option key={condition} value={condition}>{condition}</option>
+                            ))}
+                        </select>
                         <label htmlFor='ageRange'>Less than {ageRange} years</label>
                         <input
                             type='range'
