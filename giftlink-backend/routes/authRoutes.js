@@ -9,7 +9,6 @@ const connectToDatabase = require('../models/db');
 const router = express.Router();
 const dotenv = require('dotenv');
 const pino = require('pino');
-const { body, validationResult } = require('express-validator');
 
 const logger = pino();
 
