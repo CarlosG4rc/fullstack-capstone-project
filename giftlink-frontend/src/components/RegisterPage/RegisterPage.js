@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { urlConfig } from '../../config'
-import { useAppContext } from '../../context/AuthContext'
+import {urlConfig} from '../../config';
+import { useAppContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 import './RegisterPage.css';
@@ -29,8 +29,7 @@ function RegisterPage() {
                 email: email, 
                 password: password
             }),
-        })
-        
+        });
         const json = await response.json();
         
         console.log('json data', json);
