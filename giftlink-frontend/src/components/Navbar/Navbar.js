@@ -4,7 +4,7 @@ import {urlConfig} from '../../config';
 import { useAppContext } from '../../context/AuthContext';
 
 export default function Navbar() {
-    const { isLoggedIn, setIsLoggedIn, userName, setUserName } = useAppContext();
+  const { isLoggedIn, setIsLoggedIn, userName, setUserName } = useAppContext();
 
   const navigate=useNavigate();
     useEffect(() => {
